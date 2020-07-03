@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>bankaccount-parent</artifactId>
+        <groupId>org.ilopes.bankaccount</groupId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>bankaccount-core</artifactId>
+    <name>Bank Account - Core Classes (JAR)</name>
+    <description>This module contains some classes I use to put on a common library in order to help developping and documenting DDD elements</description>
+
+
+</project>
