@@ -11,7 +11,13 @@
 
     <artifactId>bankaccount-core</artifactId>
     <name>Bank Account - Core Classes (JAR)</name>
-    <description>This module contains some classes I use to put on a common library in order to help developping and documenting DDD elements</description>
+    <description>This module contains some classes I use to put on a common library in order to help developing and documenting DDD elements</description>
 
+    <dependencies>
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>
