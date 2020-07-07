@@ -24,6 +24,10 @@ public class AccountNumber extends BaseValidatable<AccountNumber> {
         validate();
     }
 
+    public AccountNumber(@NotNull String value) {
+        this(UUID.fromString(value));
+    }
+
     public String asString() {
         return value.toString();
     }

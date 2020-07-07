@@ -1,6 +1,5 @@
 package org.ilopes.bankaccount.personalaccount;
 
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;

@@ -12,6 +12,17 @@
     <artifactId>bankaccount-infra</artifactId>
     <name>Bank Account - Infrastructure Layer (JAR)</name>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <artifactId>spring-boot-starter-parent</artifactId>
+                <groupId>org.springframework.boot</groupId>
+                <version>${spring-boot.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <dependencies>
         <!-- Project dependencies -->
         <dependency>
@@ -19,12 +30,6 @@
             <artifactId>bankaccount-domain</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>org.ilopes.bankaccount</groupId>
-            <artifactId>bankaccount-appli</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-
 
         <!-- Spring and Spring Boot -->
         <dependency>
@@ -33,4 +38,21 @@
         </dependency>
 
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>jar-test-classes</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

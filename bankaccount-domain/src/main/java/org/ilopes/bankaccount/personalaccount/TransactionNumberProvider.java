@@ -6,9 +6,9 @@ import org.ilopes.bankaccount.ddd.DDD;
  * This domain service creates an account number
  */
 @DDD.DomainService
-public interface AccountNumberProvider {
+public interface TransactionNumberProvider {
     /**
-     * Gives a number for a new account.
+     * Gives a number for a new transaction.
      */
-    AccountNumber giveAccountNumberForNewAccount();
+    TransactionNumber giveTransactionNumberForNewTransaction();
 }

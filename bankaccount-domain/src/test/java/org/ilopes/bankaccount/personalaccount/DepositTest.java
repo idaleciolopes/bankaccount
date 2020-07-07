@@ -1,8 +1,5 @@
-package org.ilopes.bankaccount.personnalaccount;
+package org.ilopes.bankaccount.personalaccount;
 
-import org.ilopes.bankaccount.personalaccount.AccountNumber;
-import org.ilopes.bankaccount.personalaccount.Deposit;
-import org.ilopes.bankaccount.personalaccount.TransactionNumber;
 import org.junit.jupiter.api.Test;
 
 import javax.validation.ConstraintViolation;

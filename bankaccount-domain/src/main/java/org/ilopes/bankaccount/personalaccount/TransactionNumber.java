@@ -24,6 +24,10 @@ public class TransactionNumber extends BaseValidatable<TransactionNumber> {
         validate();
     }
 
+    public TransactionNumber(@NotNull String value) {
+        this(UUID.fromString(value));
+    }
+
     public String asString() {
         return value.toString();
     }

@@ -81,5 +81,15 @@ public final class DDD {
 
     }
 
+    /**
+     * This annotation is used to mark a repository.
+     */
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    @Target(ElementType.TYPE)
+    public @interface Repository {
+
+    }
+
     private DDD() {}
 }
