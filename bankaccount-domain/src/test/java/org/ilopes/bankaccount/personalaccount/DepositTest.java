@@ -27,7 +27,7 @@ public class DepositTest {
     @Test
     public void When_I_try_to_instantiate_a_deposit_with_negative_amount_Then_instantiation_must_fails() {
         try {
-            Deposit.builder().transactionNumber(transactionNumber).accountNumber(accountNumber).dateTime(dateTime)
+            DepositOperation.builder().transactionNumber(transactionNumber).accountNumber(accountNumber).dateTime(dateTime)
                     .amount(BigDecimal.valueOf(-50.25D)).build();
             fail("Expecting instantiation of Deposit with negative amount to fail, but succeeds");
         } catch (ConstraintViolationException ex) {
@@ -41,7 +41,7 @@ public class DepositTest {
     @Test
     public void When_I_try_to_instantiate_a_deposit_with_zero_amount_Then_instantiation_must_fails() {
         try {
-            Deposit.builder().transactionNumber(transactionNumber).accountNumber(accountNumber).dateTime(dateTime)
+            DepositOperation.builder().transactionNumber(transactionNumber).accountNumber(accountNumber).dateTime(dateTime)
                     .amount(BigDecimal.valueOf(0)).build();
             fail("Expecting instantiation of Deposit with amount of 0 to fail, but succeeds");
         } catch (ConstraintViolationException ex) {
@@ -55,7 +55,7 @@ public class DepositTest {
     @Test
     public void When_I_try_to_instantiate_a_deposit_with_null_amount_Then_instantiation_must_fails() {
         try {
-            Deposit.builder().transactionNumber(transactionNumber).accountNumber(accountNumber).dateTime(dateTime)
+            DepositOperation.builder().transactionNumber(transactionNumber).accountNumber(accountNumber).dateTime(dateTime)
                     .amount(null).build();
             fail("Expecting instantiation of Deposit with null amount to fail, but succeeds");
         } catch (ConstraintViolationException ex) {
@@ -69,18 +69,18 @@ public class DepositTest {
 
     @Test
     public void When_I_try_to_instantiate_a_deposit_with_positive_amount_Then_instantiation_must_succeeds() {
-        Deposit deposit = Deposit.builder().transactionNumber(transactionNumber).accountNumber(accountNumber)
+        DepositOperation depositOperation = DepositOperation.builder().transactionNumber(transactionNumber).accountNumber(accountNumber)
                 .dateTime(dateTime).amount(amount).build();
-        assertThat(deposit.getTransactionNumber()).isEqualTo(transactionNumber);
-        assertThat(deposit.getAccountNumber()).isEqualTo(accountNumber);
-        assertThat(deposit.getDateTime()).isEqualTo(dateTime);
-        assertThat(deposit.getAmount()).isEqualTo(amount);
+        assertThat(depositOperation.getTransactionNumber()).isEqualTo(transactionNumber);
+        assertThat(depositOperation.getAccountNumber()).isEqualTo(accountNumber);
+        assertThat(depositOperation.getDateTime()).isEqualTo(dateTime);
+        assertThat(depositOperation.getAmount()).isEqualTo(amount);
     }
 
     @Test
     public void Given_I_have_a_deposit_When_I_get_the_effective_amount_Then_I_get_the_amount_of_the_operation() {
-        Deposit deposit = Deposit.builder().transactionNumber(transactionNumber).accountNumber(accountNumber)
+        DepositOperation depositOperation = DepositOperation.builder().transactionNumber(transactionNumber).accountNumber(accountNumber)
                 .dateTime(dateTime).amount(amount).build();
-        assertThat(deposit.getEffectiveAmount()).isEqualTo(amount);
+        assertThat(depositOperation.getEffectiveAmount()).isEqualTo(amount);
     }
 }

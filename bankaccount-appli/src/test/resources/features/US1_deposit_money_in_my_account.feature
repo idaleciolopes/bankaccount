@@ -32,6 +32,6 @@ Feature: Deposit money on my account
   Scenario:
     Given I own account "caefc76d-0448-4b8c-9899-9b7cd4961564"
     When I deposit -56 on it
-    Then operation should be refused
+    Then operation should be invalid
     And I should have a balance of 150
-    And my account has now 1 operation(s)
+    And my account still has 1 operation(s)

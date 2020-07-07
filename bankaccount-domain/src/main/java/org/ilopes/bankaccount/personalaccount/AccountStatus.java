@@ -49,11 +49,11 @@ public class AccountStatus extends BaseValidatable<AccountStatus> {
     /**
      * Update the status of the account for a deposit.
      *
-     * @param deposit the deposit to do.
+     * @param depositOperation the deposit to do.
      */
-    public void depose(@NotNull Deposit deposit) {
-        this.balance = this.balance.add(deposit.getAmount());
-        this.lastOperationDate = deposit.getDateTime();
+    public void depose(@NotNull DepositOrder depositOperation) {
+        this.balance = this.balance.add(depositOperation.getAmount());
+        this.lastOperationDate = depositOperation.getOperationDateTime();
         validate();
     }
 }

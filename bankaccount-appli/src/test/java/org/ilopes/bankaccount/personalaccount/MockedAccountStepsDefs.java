@@ -3,9 +3,11 @@ package org.ilopes.bankaccount.personalaccount;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java8.En;
 import io.cucumber.spring.CucumberContextConfiguration;
+import org.mockito.InOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.validation.ConstraintViolationException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -17,8 +19,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @CucumberContextConfiguration
 public class MockedAccountStepsDefs implements En {
@@ -26,8 +27,11 @@ public class MockedAccountStepsDefs implements En {
     private final AccountStatuses accountStatuses = mock(AccountStatuses.class);
     private final Operations operations = mock(Operations.class);
     private final TransactionNumberProvider transactionNumberProvider = mock(TransactionNumberProvider.class);
-    private final DepositInAccount sut = new DepositInAccount();
+    private final DepositInAccount depositInAccount = new DepositInAccount(accountStatuses, operations, transactionNumberProvider);
+    private String currentAccountNumber;
     private Optional<AccountStatus> currentAccountStatus;
+    private boolean forbiddenOperation;
+    private boolean invalidOperation;
 
     public MockedAccountStepsDefs() {
         when(transactionNumberProvider.giveTransactionNumberForNewTransaction()).thenReturn(new TransactionNumber(UUID.randomUUID()));
@@ -48,12 +52,15 @@ public class MockedAccountStepsDefs implements En {
         });
         Given("^I own account \"([^\"]*)\"$", (String accountNumber) -> {
             LOG.info("My account is now {}", accountNumber);
+            currentAccountNumber = accountNumber;
             currentAccountStatus = accountStatuses.findByAccountNumber(new AccountNumber(accountNumber));
         });
 
-        When("^I deposit -*(\\d+) on it$", (Integer amountDeposited) -> {
-            LOG.info("Try to deposit {} on my account", amountDeposited);
-            currentAccountStatus.ifPresent(status->sut.depositInAccount(new DepositInAccountOrder(status.getNumber(), LocalDateTime.now(), BigDecimal.valueOf(amountDeposited))));
+        When("^I deposit (\\d+) on it$", (Integer amountDeposited) -> {
+            deposit(amountDeposited);
+        });
+        When("^I deposit -(\\d+) on it$", (Integer amountDeposited) -> {
+            deposit(-amountDeposited);
         });
 
         Then("^I should have a balance of (\\d+)$", (Integer expectedBalance) -> {
@@ -62,16 +69,45 @@ public class MockedAccountStepsDefs implements En {
         });
         Then("^operation should be refused$", () -> {
             LOG.info("Was the operation refused ?");
-            assertThat(currentAccountStatus).isNotPresent();
+            assertThat(forbiddenOperation).isTrue();
+        });
+        Then("^operation should be invalid$", () -> {
+            LOG.info("Was the operation valid ?");
+            assertThat(invalidOperation).isTrue();
         });
         Then("^account \"([^\"]*)\" doesn't exist$", (String accountNumber) -> {
             LOG.info("Does the account exist ?");
             assertThat(currentAccountStatus).isNotPresent();
         });
         Then("^my account has now (\\d+) operation\\(s\\)$", (Integer operationCount) -> {
-            LOG.info("Looking for operations associated with my account");
-            assertThat(operations.findByAccountNumber(currentAccountStatus.get().getNumber()).size()).isEqualTo(operationCount);
+            LOG.info("Looking for operations associated with my account after success");
+            // As we work with mocked repositories we will not have an update operation list, instead we just verify
+            // that the service call the register method of the repository.
+            InOrder inOrder = inOrder(operations);
+            inOrder.verify(operations, times(1)).registerOperation(any(Operation.class));
+            inOrder.verifyNoMoreInteractions();
         });
+        And("^my account still has (\\d+) operation\\(s\\)$", (Integer operationCount) -> {
+            LOG.info("Looking for operations associated with my account after failure");
+            // As we work with mocked repositories we will not have an update operation list, instead we just verify
+            // that the service doesn't call the register method of the repository
+            InOrder inOrder = inOrder(operations);
+            inOrder.verifyNoMoreInteractions();
+        });
+    }
+
+    private void deposit(Integer amountDeposited) {
+        LOG.info("Try to deposit {} on my account", amountDeposited);
+        forbiddenOperation = false;
+        invalidOperation = false;
+        reset(operations);
+        try {
+            depositInAccount.depositInAccount(new DepositOrder(new AccountNumber(currentAccountNumber), LocalDateTime.now(), BigDecimal.valueOf(amountDeposited)));
+        } catch (ForbiddenOperationException ex) {
+            forbiddenOperation = true;
+        } catch (ConstraintViolationException ex) {
+            invalidOperation = true;
+        }
     }
 
     private static LocalDateTime getDate(String date) {
@@ -103,7 +139,7 @@ public class MockedAccountStepsDefs implements En {
     private static Operation<?> mapToOperation(Map<String, String> map) {
         BigDecimal amount = new BigDecimal(map.get("amount"));
         if (amount.compareTo(BigDecimal.ZERO) > 0) {
-            return new Deposit(new TransactionNumber(map.get("transactionNumber")),
+            return new DepositOperation(new TransactionNumber(map.get("transactionNumber")),
                     new AccountNumber(map.get("accountNumber")),
                     getDate(map.get("dateTime")),
                     amount);
