@@ -1,8 +1,8 @@
-package org.ilopes.bankaccount.personalaccount.jpa;
+package org.ilopes.bankaccount.personalaccount.rest;
 
 import io.cucumber.junit.Cucumber;
 import io.cucumber.junit.CucumberOptions;
-import org.ilopes.bankaccount.personalaccount.JpaTestsConfig;
+import org.ilopes.bankaccount.BankAccountApplication;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,10 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 @RunWith(Cucumber.class)
 @CucumberOptions(
         features = { "classpath:features/US1_deposit_money_in_my_account.feature"},
-        extraGlue = "org.ilopes.bankaccount.personalaccount.jpa.JpaAccountStepsDefs"
+        extraGlue = "org.ilopes.bankaccount.personalaccount.rest.RestAccountStepsDefs"
 )
 
-@SpringBootTest(classes = JpaTestsConfig.class)
+@SpringBootTest(classes = BankAccountApplication.class)
 @Transactional
-public class DepositMoneyInMyAccountIT {
+public class DepositMoneyInMyAccountRestIT {
 }
