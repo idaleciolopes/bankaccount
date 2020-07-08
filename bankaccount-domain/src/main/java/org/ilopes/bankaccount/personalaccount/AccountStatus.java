@@ -64,6 +64,10 @@ public class AccountStatus extends BaseValidatable<AccountStatus> {
      * @param withdrawalOrder the operation to realize.
      * @throws ForbiddenOperationException balance is not sufficient for this withdrawal.
      */
+    // java:S1130 ForbiddentOperationException is RuntimeException and there's no need to declare it in a throw
+    // clauses, but has it is in this method a significant result of method execution I add it to improve
+    // readability of the method
+    @SuppressWarnings("java:S1130")
     public void withdraw(@NotNull WithdrawalOrder withdrawalOrder) throws ForbiddenOperationException {
         if (this.balance.compareTo(withdrawalOrder.getAmount()) < 0) {
             throw new ForbiddenOperationException("insufficient balance for this operation");
