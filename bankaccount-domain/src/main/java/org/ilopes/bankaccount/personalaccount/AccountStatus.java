@@ -2,6 +2,7 @@ package org.ilopes.bankaccount.personalaccount;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.ilopes.bankaccount.ddd.BaseValidatable;
 import org.ilopes.bankaccount.ddd.DDD;
@@ -15,12 +16,12 @@ import java.time.LocalDateTime;
  * This entity describes a personal account.
  */
 @DDD.Entity
-@Getter @ToString
+@Getter @Setter @ToString
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 public class AccountStatus extends BaseValidatable<AccountStatus> {
     @EqualsAndHashCode.Include
     @NotNull
-    private final AccountNumber number;
+    private AccountNumber number;
     @NotNull
     private LocalDateTime lastOperationDate;
     @NotNull
@@ -39,7 +40,7 @@ public class AccountStatus extends BaseValidatable<AccountStatus> {
     // creates empty beans he populate with the values from the database, so here we have no choice and must initialize
     // all our properties with null.
     @SuppressWarnings("java:S2637")
-    private AccountStatus() {
+    protected AccountStatus() {
         super(AccountStatus.class);
         number = null;
         lastOperationDate = null;

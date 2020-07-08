@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 /**
  * This base entity describes an operation. Operations can be Withdraw or Deposits.
  */
-@Data @Setter(AccessLevel.NONE) @EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
+@Data @Setter(AccessLevel.PROTECTED) @EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
 @DDD.Entity
 public abstract class Operation<O extends Operation<O>> extends BaseValidatable<O> {
     @NotNull @EqualsAndHashCode.Include
@@ -39,7 +39,7 @@ public abstract class Operation<O extends Operation<O>> extends BaseValidatable<
     // all our properties with null.
     @SuppressWarnings("java:S2637")
     @RestrictedUsage.ForJpaOnly
-    private Operation(Class<O> concreteType) {
+    protected Operation(Class<O> concreteType) {
         super(concreteType);
     }
 
@@ -51,7 +51,7 @@ public abstract class Operation<O extends Operation<O>> extends BaseValidatable<
      * @return the effective amount.
      */
     @NotNull
-    public abstract BigDecimal getEffectiveAmount();
+    public abstract BigDecimal effectiveAmount();
 
     @Getter(AccessLevel.PROTECTED)
     public abstract static class Builder<B extends Builder<B, O>, O extends Operation<O>> {

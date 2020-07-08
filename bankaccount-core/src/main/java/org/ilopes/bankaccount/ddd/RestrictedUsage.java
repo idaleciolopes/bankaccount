@@ -9,7 +9,7 @@ import java.lang.annotation.*;
  */
 public final class RestrictedUsage {
     /**
-     * This constructor is only designed to be used by JPA. Never use this constructor.
+     * This constructor or method is only designed to be used by JPA. Never use this constructor.
      */
     @Documented
     @Target({ElementType.CONSTRUCTOR, ElementType.METHOD})
@@ -19,7 +19,17 @@ public final class RestrictedUsage {
     }
 
     /**
-     * This constructor is only designed to be used by Lombok. Never use this constructor.
+     * This constructor or method is only designed to be used by Serialization. Never use this constructor.
+     */
+    @Documented
+    @Target({ElementType.CONSTRUCTOR, ElementType.METHOD, ElementType.FIELD})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface ForSerializationOnly {
+
+    }
+
+    /**
+     * This constructor or method is only designed to be used by Lombok. Never use this constructor.
      */
     @Documented
     @Target({ElementType.CONSTRUCTOR, ElementType.METHOD})

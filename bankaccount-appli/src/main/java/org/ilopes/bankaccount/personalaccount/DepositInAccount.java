@@ -5,9 +5,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+import org.springframework.stereotype.Service;
 import javax.validation.constraints.NotNull;
 
 @DDD.ApplicationService(usRef = "US1", usDescription = "In order to save money As a bank client I want to make a deposit in my account")
+@Service
 public class DepositInAccount {
     private AccountStatuses accountStatuses;
     private Operations operations;

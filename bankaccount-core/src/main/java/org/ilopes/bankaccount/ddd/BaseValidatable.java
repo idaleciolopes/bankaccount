@@ -18,7 +18,8 @@ public abstract class BaseValidatable<V extends BaseValidatable<V>> implements V
     }
 
     @RestrictedUsage.ForLombokOnly
-    private BaseValidatable() {
+    @RestrictedUsage.ForSerializationOnly
+    protected BaseValidatable() {
         concreteType = null;
     }
 

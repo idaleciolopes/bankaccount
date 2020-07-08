@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm" version="2.0">
+    <package>org.ilopes.bankaccount.personalaccount</package>
+    <entity class="Operation" name="OPERATIONS">
+        <inheritance strategy="SINGLE_TABLE"/>
+        <discriminator-column name="OPER_TYPE"/>
+        <attributes>
+            <id name="transactionNumber">
+                <column name="OPER_TRANSACTIONID"/>
+            </id>
+            <basic name="accountNumber">
+                <column name="ACCO_NUMBER"/>
+            </basic>
+            <basic name="dateTime">
+                <column name="OPER_DATETIME"/>
+            </basic>
+            <basic name="amount">
+                <column name="OPER_AMOUNT"/>
+            </basic>
+        </attributes>
+    </entity>
+    <entity class="DepositOperation">
+        <discriminator-value>deposit</discriminator-value>
+    </entity>
+    <entity class="AccountStatus" name="ACCOUNT_STATUSES">
+        <attributes>
+            <id name="number">
+                <column name="ACCO_NUMBER"/>
+            </id>
+            <basic name="lastOperationDate">
+                <column name="STAT_LAST_OPERATION"/>
+            </basic>
+            <basic name="balance">
+                <column name="STAT_BALANCE"/>
+            </basic>
+        </attributes>
+    </entity>
+    <embeddable class="TransactionNumber">
+        <attributes>
+            <basic name="value">
+                <column name="TRANS_NUMBER"/>
+            </basic>
+        </attributes>
+    </embeddable>
+</entity-mappings>

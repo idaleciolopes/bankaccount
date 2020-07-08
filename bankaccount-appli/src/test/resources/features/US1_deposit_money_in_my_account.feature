@@ -14,24 +14,21 @@ Feature: Deposit money on my account
       | 82fcafd1-4c96-4c77-b898-252734e85083 | 48966b87-23a0-4249-8845-5f80425c3d43 | today    |     75 |
 
 
-  # Regular scenario a user deposit some money on existing account
-  Scenario:
+  Scenario: a user deposit some money on existing account
     Given I own account "caefc76d-0448-4b8c-9899-9b7cd4961564"
     When I deposit 24 on it
     Then I should have a balance of 174
     And my account has now 2 operation(s)
 
-  # A user deposits some money on an unexisting account
-  Scenario:
+  Scenario: a user deposits some money on an unexisting account
     Given I own account "50dc0470-e8c2-4cb4-8113-661aaf193349"
     When I deposit 14 on it
     Then operation should be refused
     And account "50dc0470-e8c2-4cb4-8113-661aaf193349" doesn't exist
 
-  # A user deposits a negative amount of money on an existing account
-  Scenario:
-    Given I own account "caefc76d-0448-4b8c-9899-9b7cd4961564"
+  Scenario: a user deposits a negative amount of money on an existing account
+    Given I own account "48966b87-23a0-4249-8845-5f80425c3d43"
     When I deposit -56 on it
     Then operation should be invalid
-    And I should have a balance of 150
-    And my account still has 1 operation(s)
+    And I should have a balance of 200
+    And my account still has 2 operation(s)

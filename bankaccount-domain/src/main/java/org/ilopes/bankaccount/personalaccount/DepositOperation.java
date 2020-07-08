@@ -1,6 +1,7 @@
 package org.ilopes.bankaccount.personalaccount;
 
 import org.ilopes.bankaccount.ddd.DDD;
+import org.ilopes.bankaccount.ddd.RestrictedUsage;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -15,6 +16,12 @@ public class DepositOperation extends Operation<DepositOperation> {
                             @NotNull LocalDateTime date, @NonNullPositive BigDecimal amount) {
         super(DepositOperation.class, transactionNumber, accountNumber, date, amount);
     }
+
+    @RestrictedUsage.ForJpaOnly
+    protected DepositOperation() {
+        super(DepositOperation.class);
+    }
+
 
     /**
      * Builds an operation to be registerred on operation log from a deposit order and a transaction number.
@@ -33,7 +40,7 @@ public class DepositOperation extends Operation<DepositOperation> {
      */
     @Override
     @NotNull
-    public BigDecimal getEffectiveAmount() {
+    public BigDecimal effectiveAmount() {
         return getAmount();
     }
     

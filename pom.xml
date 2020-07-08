@@ -38,6 +38,9 @@
         <!-- Version for development tools -->
         <lombok.version>1.18.12</lombok.version>
 
+        <!-- Version for databases -->
+        <h2.version>1.4.200</h2.version>
+
         <!-- Version for test libraries -->
         <assertj.version>3.13.2</assertj.version>
         <junit.version>5.6.2</junit.version>
@@ -123,6 +126,12 @@
                 <optional>true</optional>
             </dependency>
 
+            <!-- Database library -->
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>${h2.version}</version>
+            </dependency>
 
             <!-- Test libraries -->
             <dependency>

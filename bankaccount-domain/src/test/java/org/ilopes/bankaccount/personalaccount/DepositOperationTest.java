@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.fail;
 /**
  * This test case just test the main business rules of a deposit.
  */
-public class DepositTest {
+public class DepositOperationTest {
     private static final TransactionNumber transactionNumber = new TransactionNumber(UUID.randomUUID());
     private static final AccountNumber accountNumber = new AccountNumber(UUID.randomUUID());
     private static final LocalDateTime dateTime = LocalDateTime.now();
@@ -59,11 +59,10 @@ public class DepositTest {
                     .amount(null).build();
             fail("Expecting instantiation of Deposit with null amount to fail, but succeeds");
         } catch (ConstraintViolationException ex) {
-            Set<ConstraintViolation<?>> violations = ex.getConstraintViolations();
-            assertThat(violations).hasSize(2);
-            assertThat(violations.stream().filter(violation->violation.getConstraintDescriptor().getAnnotation().annotationType().equals(NotNull.class)).collect(Collectors.toList())).hasSize(2);
-            assertThat(violations.stream().filter(violation->violation.getPropertyPath().toString().equals("amount")).collect(Collectors.toList())).hasSize(1);
-            assertThat(violations.stream().filter(violation->violation.getPropertyPath().toString().equals("effectiveAmount")).collect(Collectors.toList())).hasSize(1);
+            assertThat(ex.getConstraintViolations()).hasSize(1);
+            ConstraintViolation<?> violation = ex.getConstraintViolations().iterator().next();
+            assertThat(violation.getConstraintDescriptor().getAnnotation()).isInstanceOf(NotNull.class);
+            assertThat(violation.getPropertyPath().toString()).isEqualTo("amount");
         }
     }
 
@@ -81,6 +80,6 @@ public class DepositTest {
     public void Given_I_have_a_deposit_When_I_get_the_effective_amount_Then_I_get_the_amount_of_the_operation() {
         DepositOperation depositOperation = DepositOperation.builder().transactionNumber(transactionNumber).accountNumber(accountNumber)
                 .dateTime(dateTime).amount(amount).build();
-        assertThat(depositOperation.getEffectiveAmount()).isEqualTo(amount);
+        assertThat(depositOperation.effectiveAmount()).isEqualTo(amount);
     }
 }
