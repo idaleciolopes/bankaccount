@@ -27,6 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @CucumberContextConfiguration
 public class JpaAccountStepsDefs implements En {
     private static final Logger LOG = LoggerFactory.getLogger(JpaAccountStepsDefs.class);
+    // Repositories and domain services
     @Autowired
     private AccountStatuses accountStatuses;
     @Autowired
@@ -35,9 +36,14 @@ public class JpaAccountStepsDefs implements En {
     private DbInitializer dbInitializer;
     @Autowired
     private TransactionNumberProvider transactionNumberProvider;
+
+    // Application services
     @Autowired
     private DepositInAccount depositInAccount;
+    @Autowired
+    private WithdrawalFromAccount withdrawalFromAccount;
 
+    // Status
     private AccountNumber currentAccountNumber;
     private Optional<AccountStatus> currentAccountStatus;
     private OperationStatus lastOperationStatus;
@@ -64,6 +70,12 @@ public class JpaAccountStepsDefs implements En {
         });
         When("^I deposit -(\\d+) on it$", (Integer amountDeposited) -> {
             lastOperationStatus = deposit(LOG, depositInAccount, currentAccountNumber, BigDecimal.valueOf(-amountDeposited));
+        });
+        When("^I withdraw (\\d+) from it$", (Integer amountWithdrawn) -> {
+            lastOperationStatus = withdraw(LOG, withdrawalFromAccount, currentAccountNumber, BigDecimal.valueOf(amountWithdrawn));
+        });
+        When("^I withdraw -(\\d+) from it$", (Integer amountWithdrawn) -> {
+            lastOperationStatus = withdraw(LOG, withdrawalFromAccount, currentAccountNumber, BigDecimal.valueOf(-amountWithdrawn));
         });
 
         Then("^I should have a balance of (\\d+)$", (Integer expectedBalance) -> {

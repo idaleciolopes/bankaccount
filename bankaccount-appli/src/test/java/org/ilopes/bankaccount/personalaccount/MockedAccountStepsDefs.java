@@ -25,10 +25,17 @@ import static org.mockito.Mockito.*;
 @CucumberContextConfiguration
 public class MockedAccountStepsDefs implements En {
     private static final Logger LOG = LoggerFactory.getLogger(MockedAccountStepsDefs.class);
+
+    // Repositories and domain services
     private final AccountStatuses accountStatuses = mock(AccountStatuses.class);
     private final Operations operations = mock(Operations.class);
     private final TransactionNumberProvider transactionNumberProvider = mock(TransactionNumberProvider.class);
+
+    // application services
     private final DepositInAccount depositInAccount = new DepositInAccount(accountStatuses, operations, transactionNumberProvider);
+    private final WithdrawalFromAccount withdrawalFromAccount = new WithdrawalFromAccount(accountStatuses, operations, transactionNumberProvider);
+
+    // Status of tests
     private AccountNumber currentAccountNumber;
     private Optional<AccountStatus> currentAccountStatus;
     private OperationStatus lastOperationStatus;
@@ -61,6 +68,12 @@ public class MockedAccountStepsDefs implements En {
         });
         When("^I deposit -(\\d+) on it$", (Integer amountDeposited) -> {
             lastOperationStatus = deposit(LOG, depositInAccount, currentAccountNumber, BigDecimal.valueOf(-amountDeposited));
+        });
+        When("^I withdraw (\\d+) from it$", (Integer amountWithdrawn) -> {
+            lastOperationStatus = withdraw(LOG, withdrawalFromAccount, currentAccountNumber, BigDecimal.valueOf(amountWithdrawn));
+        });
+        When("^I withdraw -(\\d+) from it$", (Integer amountWithdrawn) -> {
+            lastOperationStatus = withdraw(LOG, withdrawalFromAccount, currentAccountNumber, BigDecimal.valueOf(-amountWithdrawn));
         });
 
         Then("^I should have a balance of (\\d+)$", (Integer expectedBalance) -> {

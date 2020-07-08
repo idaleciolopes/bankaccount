@@ -9,11 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(
-        features = { "classpath:features/US1_deposit_money_in_my_account.feature"},
+        features = { "classpath:features"},
         extraGlue = "org.ilopes.bankaccount.personalaccount.jpa.JpaAccountStepsDefs"
 )
 
 @SpringBootTest(classes = JpaTestsConfig.class)
 @Transactional
-public class DepositMoneyInMyAccountJpaIT {
+public class RunFeaturesWithJpaIT {
 }

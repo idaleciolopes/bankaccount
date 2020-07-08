@@ -50,11 +50,30 @@ public class AccountStatus extends BaseValidatable<AccountStatus> {
     /**
      * Update the status of the account for a deposit.
      *
-     * @param depositOperation the deposit to do.
+     * @param depositOrder the deposit to do.
      */
-    public void depose(@NotNull DepositOrder depositOperation) {
-        this.balance = this.balance.add(depositOperation.getAmount());
-        this.lastOperationDate = depositOperation.getOperationDateTime();
+    public void depose(@NotNull DepositOrder depositOrder) {
+        this.balance = this.balance.add(depositOrder.getAmount());
+        this.lastOperationDate = depositOrder.getOperationDateTime();
+        validate();
+    }
+
+    /**
+     * Update if possible the status of the account for a withdrawal.
+     *
+     * @param withdrawalOrder the operation to realize.
+     * @throws ForbiddenOperationException balance is not sufficient for this withdrawal.
+     */
+    // java:S1130 ForbiddentOperationException is RuntimeException and there's no need to declare it in a throw
+    // clauses, but has it is in this method a significant result of method execution I add it to improve
+    // readability of the method
+    @SuppressWarnings("java:S1130")
+    public void withdraw(@NotNull WithdrawalOrder withdrawalOrder) throws ForbiddenOperationException {
+        if (this.balance.compareTo(withdrawalOrder.getAmount()) < 0) {
+            throw new ForbiddenOperationException("insufficient balance for this operation");
+        }
+        this.balance = this.balance.subtract(withdrawalOrder.getAmount());
+        this.lastOperationDate = withdrawalOrder.getOperationDateTime();
         validate();
     }
 }

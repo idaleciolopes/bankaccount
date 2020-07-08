@@ -22,6 +22,9 @@
     <entity class="DepositOperation">
         <discriminator-value>deposit</discriminator-value>
     </entity>
+    <entity class="WithdrawalOperation">
+        <discriminator-value>withdrawal</discriminator-value>
+    </entity>
     <entity class="AccountStatus" name="ACCOUNT_STATUSES">
         <attributes>
             <id name="number">
