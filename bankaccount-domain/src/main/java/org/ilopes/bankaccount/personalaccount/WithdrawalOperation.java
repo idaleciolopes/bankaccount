@@ -43,6 +43,24 @@ public class WithdrawalOperation extends Operation<WithdrawalOperation> {
     public BigDecimal effectiveAmount() {
         return getAmount().negate();
     }
+
+    /**
+     * ${inheritDoc}
+     */
+    @Override
+    @NotNull
+    public BigDecimal creditedAmount() {
+        return BigDecimal.ZERO;
+    }
+
+    /**
+     * ${inheritDoc}
+     */
+    @Override
+    @NotNull
+    public BigDecimal debitedAmount() {
+        return getAmount();
+    }
     
     public static Builder builder() {
         return new Builder();

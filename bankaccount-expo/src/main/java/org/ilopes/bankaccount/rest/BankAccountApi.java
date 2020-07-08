@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
+import java.util.Set;
 
 /**
  * Controller class for Bank Account REST API.
@@ -23,12 +25,15 @@ public class BankAccountApi {
     private static final Logger LOG = LoggerFactory.getLogger(BankAccountApi.class);
     private DepositInAccount depositInAccount;
     private WithdrawalFromAccount withdrawalFromAccount;
+    private GetHistoryForAccount getHistoryForAccount;
 
     // java:S1144 This constructor will be used by Spring
     @SuppressWarnings("java:1144")
-    private BankAccountApi(DepositInAccount depositInAccount, WithdrawalFromAccount withdrawalFromAccount) {
+    private BankAccountApi(DepositInAccount depositInAccount, WithdrawalFromAccount withdrawalFromAccount,
+                           GetHistoryForAccount getHistoryForAccount) {
         this.depositInAccount = depositInAccount;
         this.withdrawalFromAccount = withdrawalFromAccount;
+        this.getHistoryForAccount = getHistoryForAccount;
     }
 
     @ApiOperation("Do a deposit on an account")
@@ -60,5 +65,17 @@ public class BankAccountApi {
         LOG.info("Receiving request to do a withdraw {} on account {}", withdrawnAmount, accountNumber);
         WithdrawalOrder withdrawalOrder = new WithdrawalOrder(new AccountNumber(accountNumber), LocalDateTime.now(), withdrawnAmount);
         withdrawalFromAccount.withdrawFromAccount(withdrawalOrder);
+    }
+
+    @ApiOperation("Gets the history of operations on an account")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "History successfully returned"),
+            @ApiResponse(code = 451, message = "Unknown account")
+    })
+    @GetMapping("/account/{accountNumber}/operations/")
+    public Set<OperationDetail> getHistoryForAccount(@ApiParam("Number of the account to request") @PathVariable String accountNumber) {
+        LOG.info("Receiving a request for history of account {}", accountNumber);
+        return getHistoryForAccount.getHistoryForAccount(new AccountNumber(accountNumber))
+                .stream().map(OperationDetail::fromOperation).collect(Collectors.toSet());
     }
 }

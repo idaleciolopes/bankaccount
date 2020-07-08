@@ -7,7 +7,8 @@ import org.junit.runner.RunWith;
 @RunWith(Cucumber.class)
 @CucumberOptions(
         features = { "classpath:features"},
-        extraGlue = "org.ilopes.bankaccount.personalaccount.AccountStepsDefs"
+        extraGlue = "org.ilopes.bankaccount.personalaccount.AccountStepsDefs",
+        tags = "@TestWithMocks"
 )
 public class RunFeaturesWithMockedServiceTest {
 }

@@ -1,10 +1,13 @@
 package org.ilopes.bankaccount.personalaccount.rest;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java8.En;
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.ilopes.bankaccount.BankAccountApplication;
 import org.ilopes.bankaccount.personalaccount.*;
+import org.ilopes.bankaccount.rest.OperationDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -23,6 +26,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.math.BigDecimal;
+import java.util.Optional;
+import java.util.Set;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,11 +47,14 @@ public class RestAccountStepsDefs implements En, InitializingBean {
     private Operations operations;
     @Autowired
     private DbInitializer dbInitializer;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     private MockMvc mockMvc;
     private AccountNumber currentAccountNumber;
     private AccountStepDefsUtils.OperationStatus lastOperationStatus;
     private MvcResult lastResult;
+    private Set<OperationDetail> lastHistory;
 
     public RestAccountStepsDefs() {
         Given("^the following accounts exists on system :$", (DataTable table) -> {
@@ -76,7 +84,27 @@ public class RestAccountStepsDefs implements En, InitializingBean {
         When("^I withdraw -(\\d+) from it$", (Integer amountWithdrawn) -> {
             lastOperationStatus = withdraw(currentAccountNumber, BigDecimal.valueOf(-amountWithdrawn));
         });
+        When("^I check my operations$", () -> {
+                    String uri = format("/apis/rest/account/%s/operations/", currentAccountNumber.asString());
+                    LOG.info("Sending Request to uri {}", uri);
+                    lastResult = mockMvc.perform(
+                            MockMvcRequestBuilders.get(uri).accept(MediaType.APPLICATION_JSON_VALUE))
+                            .andReturn();
+                    switch (lastResult.getResponse().getStatus()) {
+                        case 200:
+                            lastOperationStatus = new AccountStepDefsUtils.OperationStatus(false, false);
+                            lastHistory = objectMapper.readValue(lastResult.getResponse().getContentAsString(), new TypeReference<Set<OperationDetail>>() {});
+                            break;
+                        case 451:
+                            lastOperationStatus = new AccountStepDefsUtils.OperationStatus(true, false);
+                            lastHistory = null;
+                            break;
+                        default:
+                            lastHistory = null;
+                            throw new RuntimeException("Unexpected status : " + lastResult.getResponse().getStatus());
+                    }
 
+        });
         Then("^I should have a balance of (\\d+)$", (Integer expectedBalance) -> {
             LOG.info("Looking for balance of my account");
             LOG.info("Expected balance is {}", expectedBalance);
@@ -102,6 +130,9 @@ public class RestAccountStepsDefs implements En, InitializingBean {
         Then("^my account still has (\\d+) operation\\(s\\)$", (Integer operationCount) -> {
             LOG.info("Looking for operations associated with my account after failure");
             assertThat(operations.findByAccountNumber(currentAccountNumber)).hasSize(operationCount);
+        });
+        Then("^I should get operations :$", (DataTable table) -> {
+
         });
     }
 
@@ -149,6 +180,18 @@ public class RestAccountStepsDefs implements En, InitializingBean {
             throw new RuntimeException(ex);
         }
     }
+
+    private void assertOperation(OperationDetail returned) {
+        LOG.info("Checking operation {}", returned.getTransactionNumber());
+        Optional<Operation<?>> optionalOperation = operations.findByTransactionNumber(new TransactionNumber(returned.getTransactionNumber()));
+        assertThat(optionalOperation).isPresent();
+        Operation<?> operation = optionalOperation.get();
+        assertThat(operation.getAccountNumber().asString()).isEqualTo(new AccountNumber(returned.getAccountNumber()));
+        assertThat(operation.effectiveAmount().compareTo(returned.getEffectiveAmount())).isEqualTo(0);
+        assertThat(operation.creditedAmount().compareTo(returned.getCreditedAmount())).isEqualTo(0);
+        assertThat(operation.debitedAmount().compareTo(returned.getDebitedAmount())).isEqualTo(0);
+    }
+
 
     @Override
     public void afterPropertiesSet() {

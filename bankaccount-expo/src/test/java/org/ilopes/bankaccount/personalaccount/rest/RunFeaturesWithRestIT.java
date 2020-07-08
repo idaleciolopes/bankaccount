@@ -10,7 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RunWith(Cucumber.class)
 @CucumberOptions(
         features = { "classpath:features"},
-        extraGlue = "org.ilopes.bankaccount.personalaccount.rest.RestAccountStepsDefs"
+        extraGlue = "org.ilopes.bankaccount.personalaccount.rest.RestAccountStepsDefs",
+        tags = "@TestWithRest"
 )
 
 @SpringBootTest(classes = BankAccountApplication.class)

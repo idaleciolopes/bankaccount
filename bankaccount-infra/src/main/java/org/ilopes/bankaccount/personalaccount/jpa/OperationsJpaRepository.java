@@ -6,9 +6,11 @@ import org.ilopes.bankaccount.personalaccount.TransactionNumber;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-import java.util.List;
+import java.util.Set;
+import java.util.Optional;
 
 @Repository
 interface OperationsJpaRepository extends PagingAndSortingRepository<Operation<?>, TransactionNumber> {
-    List<Operation<?>> findByAccountNumber(AccountNumber accountNumber);
+    Optional<Operation<?>> findByTransactionNumber(TransactionNumber transactionNumber);
+    Set<Operation<?>> findByAccountNumber(AccountNumber accountNumber);
 }

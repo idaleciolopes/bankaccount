@@ -53,6 +53,22 @@ public abstract class Operation<O extends Operation<O>> extends BaseValidatable<
     @NotNull
     public abstract BigDecimal effectiveAmount();
 
+    /**
+     * Gets the amount credited on account by the operation.
+     *
+     * @return the amount credited on account by the operation, or zero for debit operations.
+     */
+    @NotNull
+    public abstract BigDecimal creditedAmount();
+
+    /**
+     * Gets the amount debited on account by the operation.
+     *
+     * @return the amount debited on account by the operation, or zero for credit operations.
+     */
+    @NotNull
+    public abstract BigDecimal debitedAmount();
+
     @Getter(AccessLevel.PROTECTED)
     public abstract static class Builder<B extends Builder<B, O>, O extends Operation<O>> {
         private final Class<B> concreteType;
