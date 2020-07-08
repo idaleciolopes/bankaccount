@@ -1,5 +1,6 @@
 package org.ilopes.bankaccount.personalaccount;
 
+import io.cucumber.datatable.DataTable;
 import org.slf4j.Logger;
 
 import java.math.BigDecimal;
@@ -108,13 +109,19 @@ public final class AccountStepDefsUtils {
      */
     public static Operation<?> convertRowToOperation(Map<String, String> row) {
         BigDecimal amount = new BigDecimal(row.get("amount"));
-        if (amount.compareTo(BigDecimal.ZERO) > 0) {
+        String type = row.get("type");
+        if ("deposit".equals(type)) {
             return new DepositOperation(new TransactionNumber(row.get("transactionNumber")),
                     new AccountNumber(row.get("accountNumber")),
                     parseDateFromGerkhins(row.get("dateTime")),
                     amount);
+        } else if ("withdraw".equals(type)) {
+            return new WithdrawalOperation(new TransactionNumber(row.get("transactionNumber")),
+                    new AccountNumber(row.get("accountNumber")),
+                    parseDateFromGerkhins(row.get("dateTime")),
+                    amount);
         }
-        throw new UnsupportedOperationException("Withdrawal not implemented yet");
+        throw new UnsupportedOperationException(String.format("%s operation not implemented yet", type));
     }
 
     // </editor-fold>

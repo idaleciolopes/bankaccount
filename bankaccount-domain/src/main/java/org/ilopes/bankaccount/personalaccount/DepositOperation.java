@@ -43,7 +43,25 @@ public class DepositOperation extends Operation<DepositOperation> {
     public BigDecimal effectiveAmount() {
         return getAmount();
     }
-    
+
+    /**
+     * ${inheritDoc}
+     */
+    @Override
+    @NotNull
+    public BigDecimal creditedAmount() {
+        return getAmount();
+    }
+
+    /**
+     * ${inheritDoc}
+     */
+    @Override
+    @NotNull
+    public BigDecimal debitedAmount() {
+        return BigDecimal.ZERO;
+    }
+
     public static Builder builder() {
         return new Builder();
     }

@@ -15,6 +15,8 @@ import org.springframework.test.context.ContextConfiguration;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
 import javax.validation.ConstraintViolationException;
 
@@ -42,11 +44,14 @@ public class JpaAccountStepsDefs implements En {
     private DepositInAccount depositInAccount;
     @Autowired
     private WithdrawalFromAccount withdrawalFromAccount;
+    @Autowired
+    private GetHistoryForAccount getHistoryForAccount;
 
     // Status
     private AccountNumber currentAccountNumber;
     private Optional<AccountStatus> currentAccountStatus;
     private OperationStatus lastOperationStatus;
+    private Collection<Operation<?>> lastOperations;
 
     public JpaAccountStepsDefs() {
         Given("^the following accounts exists on system :$", (DataTable table) -> {
@@ -77,6 +82,14 @@ public class JpaAccountStepsDefs implements En {
         When("^I withdraw -(\\d+) from it$", (Integer amountWithdrawn) -> {
             lastOperationStatus = withdraw(LOG, withdrawalFromAccount, currentAccountNumber, BigDecimal.valueOf(-amountWithdrawn));
         });
+        When("^I check my operations$", () -> {
+            try {
+                lastOperations = getHistoryForAccount.getHistoryForAccount(currentAccountNumber);
+                lastOperationStatus = new OperationStatus(false, false);
+            } catch (ForbiddenOperationException ex) {
+                lastOperationStatus = new OperationStatus(true, false);
+            }
+        });
 
         Then("^I should have a balance of (\\d+)$", (Integer expectedBalance) -> {
             LOG.info("Looking for balance of my account");
@@ -102,5 +115,20 @@ public class JpaAccountStepsDefs implements En {
             LOG.info("Looking for operations associated with my account after failure");
             assertThat(operations.findByAccountNumber(currentAccountNumber)).hasSize(operationCount);
         });
+        Then("^I should get operations :$", (DataTable table) -> {
+            table.asMaps().stream().forEach(this::assertOperation);
+        });
+    }
+
+    private void assertOperation(Map<String, String> row) {
+        LOG.info("Checking operation {}", row.get("transactionNumber"));
+        Optional<Operation<?>> optionalOperation = operations.findByTransactionNumber(new TransactionNumber(row.get("transactionNumber")));
+        assertThat(optionalOperation).isPresent();
+        Operation<?> operation = optionalOperation.get();
+        assertThat(operation.getAccountNumber().asString()).isEqualTo(row.get("accountNumber"));
+        assertThat(operation.getAmount().compareTo(new BigDecimal(row.get("amount")))).isEqualTo(0);
+        assertThat(operation.effectiveAmount().compareTo(new BigDecimal(row.get("effectiveAmount")))).isEqualTo(0);
+        assertThat(operation.creditedAmount().compareTo(new BigDecimal(row.get("creditedAmount")))).isEqualTo(0);
+        assertThat(operation.debitedAmount().compareTo(new BigDecimal(row.get("debitedAmount")))).isEqualTo(0);
     }
 }

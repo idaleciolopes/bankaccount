@@ -11,12 +11,12 @@ import java.util.Optional;
  * real JPA repository.
  */
 @Component
-class AccountStatusesJpaBridge implements org.ilopes.bankaccount.personalaccount.AccountStatuses {
+class AccountStatusesJpaAdapter implements org.ilopes.bankaccount.personalaccount.AccountStatuses {
     private AccountStatusesJpaRepository jpaAccountStatuses;
 
     // java:S1144 This constructor will be used by Spring
     @SuppressWarnings("java:S1144")
-    private AccountStatusesJpaBridge(AccountStatusesJpaRepository jpaAccountStatuses) {
+    private AccountStatusesJpaAdapter(AccountStatusesJpaRepository jpaAccountStatuses) {
         this.jpaAccountStatuses = jpaAccountStatuses;
     }
 
