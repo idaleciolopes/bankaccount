@@ -1,16 +1,11 @@
 package org.ilopes.bankaccount.rest;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import org.ilopes.bankaccount.ddd.DDD;
 import lombok.Data;
 import org.ilopes.bankaccount.personalaccount.Operation;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.time.format.DateTimeFormatter;
 import java.time.LocalDateTime;
 import java.math.BigDecimal;
 

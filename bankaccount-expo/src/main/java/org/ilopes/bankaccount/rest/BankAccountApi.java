@@ -4,7 +4,6 @@ import io.swagger.annotations.*;
 import org.ilopes.bankaccount.personalaccount.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.annotation.MergedAnnotationCollectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;

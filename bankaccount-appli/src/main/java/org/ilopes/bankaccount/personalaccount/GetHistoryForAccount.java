@@ -11,7 +11,7 @@ public class GetHistoryForAccount {
     private AccountStatuses accountStatuses;
     private Operations operations;
 
-    private GetHistoryForAccount(AccountStatuses accountStatuses, Operations operations) {
+    GetHistoryForAccount(AccountStatuses accountStatuses, Operations operations) {
         this.accountStatuses = accountStatuses;
         this.operations = operations;
     }
