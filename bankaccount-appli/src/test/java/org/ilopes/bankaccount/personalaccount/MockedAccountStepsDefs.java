@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.ilopes.bankaccount.personalaccount.AccountStepDefsUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -125,7 +126,7 @@ public class MockedAccountStepsDefs implements En {
 
     private static void addOperationToOperationsMock(Operations mock, AccountNumber accountNumber, Collection<Operation<?>> operations) {
         LOG.info("Configuring {} operations for account {}", operations.size(), accountNumber);
-        when(mock.findByAccountNumber(accountNumber)).thenReturn(operations);
+        when(mock.findByAccountNumber(accountNumber)).thenReturn(operations.stream().collect(Collectors.toSet()));
     }
 
 }

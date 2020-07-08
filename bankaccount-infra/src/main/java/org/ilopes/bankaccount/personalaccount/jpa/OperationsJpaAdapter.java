@@ -5,7 +5,7 @@ import org.ilopes.bankaccount.personalaccount.Operation;
 import org.ilopes.bankaccount.personalaccount.TransactionNumber;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
+import java.util.Set;
 import java.util.Optional;
 
 @Component
@@ -24,7 +24,7 @@ class OperationsJpaAdapter implements org.ilopes.bankaccount.personalaccount.Ope
     }
 
     @Override
-    public Collection<Operation<?>> findByAccountNumber(AccountNumber accountNumber) {
+    public Set<Operation<?>> findByAccountNumber(AccountNumber accountNumber) {
         return operationsJpaRepository.findByAccountNumber(accountNumber);
     }
 

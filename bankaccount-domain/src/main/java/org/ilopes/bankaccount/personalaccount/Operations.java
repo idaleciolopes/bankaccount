@@ -2,7 +2,7 @@ package org.ilopes.bankaccount.personalaccount;
 
 import org.ilopes.bankaccount.ddd.DDD;
 
-import java.util.Collection;
+import java.util.Set;
 import java.util.Optional;
 
 /**
@@ -20,7 +20,7 @@ public interface Operations {
      * @param accountNumber the number of the account to seek.
      * @return the operations linked to the account.
      */
-    Collection<Operation<?>> findByAccountNumber(AccountNumber accountNumber);
+    Set<Operation<?>> findByAccountNumber(AccountNumber accountNumber);
 
     /**
      * Register an operation in the repository.
