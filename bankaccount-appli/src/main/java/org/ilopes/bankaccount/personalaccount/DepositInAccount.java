@@ -26,6 +26,7 @@ public class DepositInAccount {
         // First we look for the account and try to update its status
         Optional<AccountStatus> accountStatus = accountStatuses.findByAccountNumber(depositOrder.getAccountNumber());
         accountStatus.orElseThrow(()->new ForbiddenOperationException("unknown account")).depose(depositOrder);
+        // Then we add the operation to the operation log
         TransactionNumber transactionNumber = transactionNumberProvider.giveTransactionNumberForNewTransaction();
         operations.registerOperation(DepositOperation.buildFromOrder(transactionNumber, depositOrder));
     }

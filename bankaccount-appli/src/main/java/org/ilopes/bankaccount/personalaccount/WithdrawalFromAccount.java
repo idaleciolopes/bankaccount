@@ -21,7 +21,12 @@ public class WithdrawalFromAccount {
     }
 
     @Transactional
-    public void withdrawFromAccount(@NotNull WithdrawalOrder withdrawalOperation) {
-        throw new UnsupportedOperationException("not implemented yet");
+    public void withdrawFromAccount(@NotNull WithdrawalOrder withdrawalOrder) {
+        // First we look for the account and try to update its status
+        Optional<AccountStatus> accountStatus = accountStatuses.findByAccountNumber(withdrawalOrder.getAccountNumber());
+        accountStatus.orElseThrow(()->new ForbiddenOperationException("unknown account")).withdraw(withdrawalOrder);
+        // Then we add the operation to the operation log
+        TransactionNumber transactionNumber = transactionNumberProvider.giveTransactionNumberForNewTransaction();
+        operations.registerOperation(WithdrawalOperation.buildFromOrder(transactionNumber, withdrawalOrder));
     }
 }
