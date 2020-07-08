@@ -26,6 +26,7 @@ import java.math.BigDecimal;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.ilopes.bankaccount.personalaccount.AccountStepDefsUtils.withdraw;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(classes = BankAccountApplication.class, loader = SpringBootContextLoader.class)
@@ -69,6 +70,12 @@ public class RestAccountStepsDefs implements En, InitializingBean {
         When("^I deposit -(\\d+) on it$", (Integer amountDeposited) -> {
             lastOperationStatus = deposit(currentAccountNumber, BigDecimal.valueOf(-amountDeposited));
         });
+        When("^I withdraw (\\d+) from it$", (Integer amountWithdrawn) -> {
+            lastOperationStatus = withdraw(currentAccountNumber, BigDecimal.valueOf(amountWithdrawn));
+        });
+        When("^I withdraw -(\\d+) from it$", (Integer amountWithdrawn) -> {
+            lastOperationStatus = withdraw(currentAccountNumber, BigDecimal.valueOf(-amountWithdrawn));
+        });
 
         Then("^I should have a balance of (\\d+)$", (Integer expectedBalance) -> {
             LOG.info("Looking for balance of my account");
@@ -100,6 +107,29 @@ public class RestAccountStepsDefs implements En, InitializingBean {
 
     public AccountStepDefsUtils.OperationStatus deposit(AccountNumber accountNumber, BigDecimal amount) {
         String uri = format("/apis/rest/account/%s/actions/deposit/%s", accountNumber.asString(), amount.toString());
+        LOG.info("Sending Request to uri {}", uri);
+        try {
+            lastResult = mockMvc.perform(
+                    MockMvcRequestBuilders.post(uri).accept(MediaType.APPLICATION_JSON_VALUE))
+                    .andReturn();
+            switch (lastResult.getResponse().getStatus()) {
+                case 201:
+                    return new AccountStepDefsUtils.OperationStatus(false, false);
+                case 451:
+                    return new AccountStepDefsUtils.OperationStatus(true, false);
+                case 400:
+                    return new AccountStepDefsUtils.OperationStatus(false, true);
+                default:
+                    throw new RuntimeException("Unexpected status : " + lastResult.getResponse().getStatus());
+            }
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+
+    public AccountStepDefsUtils.OperationStatus withdraw(AccountNumber accountNumber, BigDecimal amount) {
+        String uri = format("/apis/rest/account/%s/actions/withdraw/%s", accountNumber.asString(), amount.toString());
         LOG.info("Sending Request to uri {}", uri);
         try {
             lastResult = mockMvc.perform(

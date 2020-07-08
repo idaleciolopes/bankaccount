@@ -39,6 +39,29 @@ public final class AccountStepDefsUtils {
         return new OperationStatus(forbiddenOperation, invalidOperation);
     }
 
+
+    /**
+     * Do a withdrawal.
+     *
+     * @param log the logger of the current StepDefs class.
+     * @param withdrawalFromAccount the service responsible to do a deposit.
+     * @param accountNumber the number of the account in which we want to deposit money.
+     * @param amountWithdrawn the amount of the deposit.
+     */
+    public static OperationStatus withdraw(Logger log, WithdrawalFromAccount withdrawalFromAccount, AccountNumber accountNumber, BigDecimal amountWithdrawn) {
+        log.info("Try to withdraw {} from my account", amountWithdrawn);
+        boolean forbiddenOperation = false;
+        boolean invalidOperation = false;
+        try {
+            withdrawalFromAccount.withdrawFromAccount(new WithdrawalOrder(accountNumber, LocalDateTime.now(), amountWithdrawn));
+        } catch (ForbiddenOperationException ex) {
+            forbiddenOperation = true;
+        } catch (ConstraintViolationException ex) {
+            invalidOperation = true;
+        }
+        return new OperationStatus(forbiddenOperation, invalidOperation);
+    }
+
     // </editor-fold>
 
     // <editor-fold desc="Parsing gerkhin file">

@@ -6,8 +6,8 @@ import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(
-        features = { "classpath:features/US1_deposit_money_in_my_account.feature"},
+        features = { "classpath:features"},
         extraGlue = "org.ilopes.bankaccount.personalaccount.AccountStepsDefs"
 )
-public class DepositMoneyInMyAccountTest {
+public class RunFeaturesWithMockedServiceTest {
 }
